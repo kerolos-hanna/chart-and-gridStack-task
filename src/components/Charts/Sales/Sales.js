@@ -1,115 +1,111 @@
 /** @format */
 
-import React, { Component } from 'react';
-import * as am4core from '@amcharts/amcharts4/core';
-import * as am4charts from '@amcharts/amcharts4/charts';
-import am4themes_animated from '@amcharts/amcharts4/themes/animated';
-import SalesData from './SalesData';
+import React, { Component } from "react";
+import * as am4core from "@amcharts/amcharts4/core";
+import * as am4charts from "@amcharts/amcharts4/charts";
+import am4themes_animated from "@amcharts/amcharts4/themes/animated";
+import data from "./SalesData";
 
 export default class Sales extends Component {
-	componentDidMount() {
-		am4core.useTheme(am4themes_animated);
-		let chart = am4core.create('SalesChart', am4charts.XYChart);
+  componentDidMount() {
+    am4core.useTheme(am4themes_animated);
+    let chart = am4core.create("chart", am4charts.XYChart);
+    chart.scrollbarX = new am4core.Scrollbar();
 
-		// Add data
-		chart.data = SalesData;
+    // Add data
+    chart.data = data;
 
-		// Create axes
-		//eslint-disable-next-line
-		let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
-		//dateAxis.renderer.grid.template.location = 0;
-		//dateAxis.renderer.minGridDistance = 30;
+    prepareParetoData();
 
-		let valueAxis1 = chart.yAxes.push(new am4charts.ValueAxis());
-		valueAxis1.title.text = 'Sales';
+    function prepareParetoData() {
+      let total = 0;
 
-		let valueAxis2 = chart.yAxes.push(new am4charts.ValueAxis());
-		valueAxis2.title.text = 'Market Days';
-		valueAxis2.renderer.opposite = true;
-		valueAxis2.renderer.grid.template.disabled = true;
+      for (let i = 0; i < chart.data.length; i++) {
+        let value = chart.data[i].visits;
+        total += value;
+      }
 
-		// Create series
-		let series1 = chart.series.push(new am4charts.ColumnSeries());
-		series1.dataFields.valueY = 'sales1';
-		series1.dataFields.dateX = 'date';
-		series1.yAxis = valueAxis1;
-		series1.name = 'Target Sales';
-		//eslint-disable-next-line
-		series1.tooltipText = '{name}\n[bold font-size: 20]${valueY}M[/]';
-		series1.fill = chart.colors.getIndex(0);
-		series1.strokeWidth = 0;
-		series1.clustered = false;
-		series1.columns.template.width = am4core.percent(40);
+      let sum = 0;
+      for (let i = 0; i < chart.data.length; i++) {
+        let value = chart.data[i].visits;
+        sum += value;
+        chart.data[i].pareto = (sum / total) * 100;
+      }
+    }
 
-		let series2 = chart.series.push(new am4charts.ColumnSeries());
-		series2.dataFields.valueY = 'sales2';
-		series2.dataFields.dateX = 'date';
-		series2.yAxis = valueAxis1;
-		//eslint-disable-next-line
-		series2.name = 'Actual Sales';
-		//eslint-disable-next-line
-		series2.tooltipText = '{name}\n[bold font-size: 20]${valueY}M[/]';
-		series2.fill = chart.colors.getIndex(0).lighten(0.5);
-		series2.strokeWidth = 0;
-		series2.clustered = false;
-		series2.toBack();
+    // Create axes
+    let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+    categoryAxis.dataFields.category = "country";
+    categoryAxis.renderer.grid.template.location = 0;
+    categoryAxis.renderer.minGridDistance = 60;
+    categoryAxis.tooltip.disabled = true;
 
-		let series3 = chart.series.push(new am4charts.LineSeries());
-		series3.dataFields.valueY = 'market1';
-		series3.dataFields.dateX = 'date';
-		series3.name = 'Market Days';
-		series3.strokeWidth = 2;
-		series3.tensionX = 0.7;
-		series3.yAxis = valueAxis2;
-		series3.tooltipText = '{name}\n[bold font-size: 20]{valueY}[/]';
+    let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+    valueAxis.renderer.minWidth = 50;
+    valueAxis.min = 0;
+    valueAxis.cursorTooltipEnabled = false;
 
-		let bullet3 = series3.bullets.push(new am4charts.CircleBullet());
-		bullet3.circle.radius = 3;
-		bullet3.circle.strokeWidth = 2;
-		bullet3.circle.fill = am4core.color('#fff');
+    // Create series
+    let series = chart.series.push(new am4charts.ColumnSeries());
+    series.sequencedInterpolation = true;
+    series.dataFields.valueY = "visits";
+    series.dataFields.categoryX = "country";
+    series.tooltipText = "[{categoryX}: bold]{valueY}[/]";
+    series.columns.template.strokeWidth = 0;
 
-		let series4 = chart.series.push(new am4charts.LineSeries());
-		series4.dataFields.valueY = 'market2';
-		series4.dataFields.dateX = 'date';
-		series4.name = 'Market Days ALL';
-		series4.strokeWidth = 2;
-		series4.tensionX = 0.7;
-		series4.yAxis = valueAxis2;
-		series4.tooltipText = '{name}\n[bold font-size: 20]{valueY}[/]';
-		series4.stroke = chart.colors.getIndex(0).lighten(0.5);
-		series4.strokeDasharray = '3,3';
+    series.tooltip.pointerOrientation = "vertical";
 
-		let bullet4 = series4.bullets.push(new am4charts.CircleBullet());
-		bullet4.circle.radius = 3;
-		bullet4.circle.strokeWidth = 2;
-		bullet4.circle.fill = am4core.color('#fff');
+    series.columns.template.column.cornerRadiusTopLeft = 10;
+    series.columns.template.column.cornerRadiusTopRight = 10;
+    series.columns.template.column.fillOpacity = 0.8;
 
-		// Add cursor
-		chart.cursor = new am4charts.XYCursor();
+    // on hover, make corner radiuses bigger
+    let hoverState = series.columns.template.column.states.create("hover");
+    hoverState.properties.cornerRadiusTopLeft = 0;
+    hoverState.properties.cornerRadiusTopRight = 0;
+    hoverState.properties.fillOpacity = 1;
 
-		// Add legend
-		chart.legend = new am4charts.Legend();
-		chart.legend.position = 'top';
+    series.columns.template.adapter.add("fill", function (fill, target) {
+      return chart.colors.getIndex(target.dataItem.index);
+    });
 
-		// Add scrollbar
-		chart.scrollbarX = new am4charts.XYChartScrollbar();
-		chart.scrollbarX.series.push(series1);
-		chart.scrollbarX.series.push(series3);
-		chart.scrollbarX.parent = chart.bottomAxesContainer;
+    let paretoValueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+    paretoValueAxis.renderer.opposite = true;
+    paretoValueAxis.min = 0;
+    paretoValueAxis.max = 100;
+    paretoValueAxis.strictMinMax = true;
+    paretoValueAxis.renderer.grid.template.disabled = true;
+    paretoValueAxis.numberFormatter = new am4core.NumberFormatter();
+    paretoValueAxis.numberFormatter.numberFormat = "#'%'";
+    paretoValueAxis.cursorTooltipEnabled = false;
 
-		this.chart = chart;
-	}
+    let paretoSeries = chart.series.push(new am4charts.LineSeries());
+    paretoSeries.dataFields.valueY = "pareto";
+    paretoSeries.dataFields.categoryX = "country";
+    paretoSeries.yAxis = paretoValueAxis;
+    paretoSeries.tooltipText = "pareto: {valueY.formatNumber('#.0')}%[/]";
+    paretoSeries.bullets.push(new am4charts.CircleBullet());
+    paretoSeries.strokeWidth = 2;
+    paretoSeries.stroke = new am4core.InterfaceColorSet().getFor(
+      "alternativeBackground"
+    );
+    paretoSeries.strokeOpacity = 0.5;
 
-	componentWillUnmount() {
-		if (this.chart) {
-			this.chart.dispose();
-		}
-	}
-	render() {
-		return (
-			<div>
-				<div id="SalesChart" style={{ width: '100%', height: '500px' }} />
-			</div>
-		);
-	}
+    // Cursor
+    chart.cursor = new am4charts.XYCursor();
+    chart.cursor.behavior = "panX";
+  }
+
+  componentWillUnmount() {
+    if (this.chart) {
+      this.chart.dispose();
+    }
+  }
+  render() {
+    return (
+      <div>
+        <div id="chart" style={{ width: "100%", height: "200px" }} />
+      </div>
+    );
+  }
 }

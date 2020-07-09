@@ -1,51 +1,51 @@
 /** @format */
 
 .Navbar {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 0.7rem 2rem;
-	z-index: 100;
-	width: 100%;
-	opacity: 0.9;
-	margin-bottom: 1rem;
-	background-color: #333333;
-	color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.3rem 2rem;
+  z-index: 100;
+  width: 100%;
+  opacity: 0.9;
+  margin-bottom: 1rem;
+  background-color: #333333;
+  color: #fff;
 }
 
 .Navbar ul {
-	display: flex;
-	list-style: none;
-	justify-content: center;
-	align-items: center;
-	background-color: #454545;
-	border-radius: 25px;
+  display: flex;
+  list-style: none;
+  justify-content: center;
+  align-items: center;
+  background-color: #454545;
+  border-radius: 25px;
 }
 
 .Navbar li {
-	color: #fff;
-	padding: 0.45rem;
-	margin: 0 0.25rem;
+  color: #fff;
+  padding: 0.45rem;
+  margin: 0 0.25rem;
 }
 
 .Navbar li:hover {
-	color: var(--light-color);
+  color: var(--light-color);
 }
 
 .Navbar .welcome span {
-	margin-right: 0.6rem;
+  margin-right: 0.6rem;
 }
 
 @media (max-width: 700px) {
-	.Navbar {
-		display: flex;
-		text-align: center;
-		font-size: 15px;
-	}
+  .Navbar {
+    display: flex;
+    text-align: center;
+    font-size: 15px;
+  }
 
-	.Navbar ul {
-		text-align: center;
-		justify-content: center;
-		font-size: 14px;
-	}
+  .Navbar ul {
+    text-align: center;
+    justify-content: center;
+    font-size: 14px;
+  }
 }

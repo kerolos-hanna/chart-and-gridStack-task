@@ -1,9 +1,7 @@
-/** @format */
-
 const data = [
   {
     country: "USA",
-    visits: 3025,
+    visits: 23725,
   },
   {
     country: "China",
@@ -34,8 +32,16 @@ const data = [
     visits: 711,
   },
   {
-    country: "Netherlands",
-    visits: 665,
+    country: "Russia",
+    visits: 580,
+  },
+  {
+    country: "Egypt",
+    visits: 443,
+  },
+  {
+    country: "Canada",
+    visits: 441,
   },
 ];
 
