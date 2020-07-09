@@ -8,7 +8,7 @@ import classes from './Navbar.module.css';
 const Navbar = () => {
 	return (
 		<nav className={classes.Navbar}>
-			<h2>Dashbang</h2>
+			<h3>Dashbang</h3>
 			<ul>
 				<li>
 					<Avatar alt="Kerolos" src="/static/images/avatar/1.jpg" />
